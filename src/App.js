@@ -1,6 +1,5 @@
-import logo from './logo.svg';
 import axios from 'axios';
-import { Modal, Pagination, Space, Table, Tag, Tooltip } from 'antd';
+import { Input, Table, Tag } from 'antd';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import ContentLoader from './components/ContentLoader';
@@ -49,8 +48,10 @@ function App() {
   const [data, setData] = useState();
   const [loading, setLoading] = useState(false);
   const [tableData, setTableData] = useState([]);
+  const [originalTableData, setOriginalTableData] = useState([]);
 
   const getData = () => {
+    setLoading(true);
     axios({
       url: 'https://api.monday.com/v2',
       method: 'post',
@@ -96,10 +97,23 @@ function App() {
         `
       }
     }).then((response) => {
+      setLoading(false);
       setData(response.data)
     }).catch(error => {
-      console.log(error);
+      setLoading(false);
     });
+  }
+
+  const onChange = (e) => {
+    const value = e.target.value;
+    const initialData = originalTableData;
+    const newData = initialData.filter(x => {
+      if (x.finalidade.includes(value) || x.atividade.includes(value) || x.pessoa.includes(value)) {
+        return true;
+      }
+      return false;
+    })
+    setTableData(newData);
   }
 
   const composeTableData = (data) => {
@@ -111,7 +125,6 @@ function App() {
         status: x.column_values.find(y => y.id === 'status')?.text || 'To do',
         pessoa: x.column_values.find(y => y.id === 'person')?.text,
         date: moment(x.column_values.find(y => y.id === 'date4')?.text).calendar()?.toString(),
-        // status: (x.active ? 'active' : 'blocked'),
       };
     });
   };
@@ -120,6 +133,7 @@ function App() {
     if (data) {
       const tableInfo = composeTableData(data?.data?.boards[0]?.items);
       setTableData(tableInfo);
+      setOriginalTableData(tableInfo);
     }
   }, [data]);
   
@@ -134,6 +148,8 @@ function App() {
             <ContentLoader />
           ) : (
           <>
+          <h3 style={{textDecoration: 'underline'}}>List of Atividades</h3>
+          <Input onChange={onChange} placeholder="Search..." style={{width: 200}} />
           <Table
             columns={columns}
             dataSource={tableData}
