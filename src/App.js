@@ -100,6 +100,7 @@ function App() {
       setLoading(false);
       setData(response.data)
     }).catch(error => {
+      console.log({error})
       setLoading(false);
     });
   }
