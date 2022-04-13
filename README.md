@@ -25,11 +25,19 @@ Below shows the project structure;
 
 ```
 
+## Live Demo
+
+- [Demo](https://master.d3vlqhzw7yb987.amplifyapp.com/).
+
 ## How to run locally
 
 ### Clone the repository
 
 - Run `git clone https://github.com/devugo/monday-api.git` on your terminal/cmd to pull the project
+
+### Install Dependencies
+
+- Run `npm install` or `yarn install` to install project dependencies
 
 ### Available Scripts
 
